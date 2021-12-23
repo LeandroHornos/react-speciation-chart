@@ -180,3 +180,5 @@ export const diproticSpeciation = (pkas) => {
 };
 
 export default ChartJsDemo;
+
+// a ver si actualiza con un push
