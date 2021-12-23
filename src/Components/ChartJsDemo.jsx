@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import { useForm } from "react-hook-form";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,14 +17,18 @@ import { Line } from "react-chartjs-2";
 import { CenteredColRow } from "./Layout";
 
 const ChartJsDemo = () => {
-  const { pHvals, Xh2a, Xha, Xa } = diproticSpeciation([3, 8]);
+  const { register, handleSubmit } = useForm({
+    defaultValues: { pka1: 2, pka2: 8 },
+  });
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
   const [options, setOptions] = useState({});
+  const [pkas, setPkas] = useState([8, 14]);
 
   useEffect(() => {
     setLoading(true);
+    const { pHvals, Xh2a, Xha, Xa } = diproticSpeciation(pkas);
 
     ChartJS.register(
       CategoryScale,
@@ -65,7 +71,7 @@ const ChartJsDemo = () => {
           backgroundColor: "rgba(53, 162, 235, 0.5)",
         },
         {
-          label: "HA",
+          label: "A",
           data: Xa,
           borderColor: "rgb(53, 32, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -75,7 +81,12 @@ const ChartJsDemo = () => {
     setOptions(options);
     setData(data);
     setLoading(false);
-  }, []);
+  }, [pkas]);
+
+  const onSubmit = (data) => {
+    console.log(data);
+    setPkas([parseFloat(data.pka1), parseFloat(data.pka2)]);
+  };
   return (
     <div className="container">
       <header>
@@ -94,17 +105,38 @@ const ChartJsDemo = () => {
           centerColClasses="d-flex flex-column justify-content-between align-items-center"
         >
           <h2>Ejemplo</h2>
-          <p>pepito</p>
+          <p>
+            Diagrama de especiación de un ácido diprótico. En el gráfico se
+            muestra la fracción molar de cada especie para cada pH.
+          </p>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="form-group">
+              <label htmlFor="pka1">pKa1</label>
+              <input
+                className="form-control"
+                type="number"
+                {...register("pka1")}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="pka2">pKa2</label>
+              <input
+                className="form-control"
+                type="number"
+                {...register("pka2")}
+              />
+            </div>
+            <div className="form-group">
+              <button type="submit" className="btn btn-primary">
+                Recalcular
+              </button>
+            </div>
+          </form>
           {!loading && <Line options={options} data={data} />}
         </CenteredColRow>
       </main>
     </div>
   );
-};
-
-const sampleData = {
-  pkas: [2.5, 4.6],
-  labels: ["1", "2"],
 };
 
 export const diproticSpeciation = (pkas) => {
@@ -117,7 +149,12 @@ export const diproticSpeciation = (pkas) => {
   const k1 = 10 ** (-1 * pkas[0]);
   const k2 = 10 ** (-1 * pkas[1]);
 
-  console.log(pkas, k1, k2);
+  console.log(
+    "Estos son los pkas recibidos y las constantes correspondientes",
+    pkas,
+    k1,
+    k2
+  );
 
   // Generar pH vals
   let pH = 0;
@@ -135,7 +172,8 @@ export const diproticSpeciation = (pkas) => {
     const xha = (k1 * H) / (k1 * H ** 2 + k1 * H + k1 * k2);
     Xa.push(xa);
     Xha.push(xha);
-    Xh2a.push(1 - xa - xha);
+    Xh2a.push(1 - (xa + xha));
+    console.log(xa + xha);
   }
   console.log({ pHvals, Xh2a, Xha, Xa });
   return { pHvals, Xh2a, Xha, Xa };
