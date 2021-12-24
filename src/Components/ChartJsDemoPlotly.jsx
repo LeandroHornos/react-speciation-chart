@@ -22,7 +22,7 @@ const ChartJsDemo = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
   const [options, setOptions] = useState({});
-  const [pkas, setPkas] = useState([4, 8]);
+  const [pkas, setPkas] = useState([3, 6]);
 
   useEffect(() => {
     setLoading(true);
@@ -146,11 +146,11 @@ export const diproticSpeciation = (pkas) => {
   const Xa = []; // fraccion molar del anion dibasico sin disociar para cada pH
 
   // Obtengo constantes a partir de pKas
-  const k1 = 10 ** (-1 * 2 * pkas[0]);
-  const k2 = 10 ** (-1 * 2 * pkas[1]);
+  const k1 = 10 ** (-1 * pkas[0]);
+  const k2 = 10 ** (-1 * pkas[1]);
 
   console.log(
-    "Estos son los pkas recibidos y las constantes correspondientes",
+    "Estos son los pkas recibidos y las constantes",
     pkas,
     k1,
     k2
