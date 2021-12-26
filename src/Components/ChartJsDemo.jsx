@@ -163,9 +163,9 @@ export const diproticSpeciation = (pkas) => {
     pHvals.push(pH);
     pH = pH + step;
   }
-  for (pH in pHvals) {
+  for (val in pHvals) {
     // obtengo conc de protones
-    const H = 10 ** (-1 * pH);
+    const H = 10 ** (-1 * val);
     // Calculo fraccion molar de a
     const xa = (k1 * k2) / (H ** 2 + k1 * H + k1 * k2);
     // Calculo fraccion molar de Ha

@@ -2,17 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  PointElement,
-  LinearScale,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+import Plot from "react-plotly.js";
 
 import { CenteredColRow } from "./Layout";
 
@@ -26,57 +16,7 @@ const ChartJsDemo = () => {
 
   useEffect(() => {
     setLoading(true);
-    const { pHvals, Xh2a, Xha, Xa } = diproticSpeciation(pkas);
-
-    ChartJS.register(
-      CategoryScale,
-      LinearScale,
-      PointElement,
-      LineElement,
-      Title,
-      Tooltip,
-      Legend
-    );
-
-    const labels = pHvals;
-
-    const options = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: "Chart.js Line Chart",
-        },
-      },
-    };
-
-    const data = {
-      labels,
-      datasets: [
-        {
-          label: "H2A",
-          data: Xh2a,
-          borderColor: "rgb(255, 99, 132)",
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
-        },
-        {
-          label: "HA",
-          data: Xha,
-          borderColor: "rgb(53, 162, 235)",
-          backgroundColor: "rgba(53, 162, 235, 0.5)",
-        },
-        {
-          label: "A",
-          data: Xa,
-          borderColor: "rgb(53, 32, 235)",
-          backgroundColor: "rgba(53, 162, 235, 0.5)",
-        },
-      ],
-    };
-    setOptions(options);
+    const data = diproticSpeciation(pkas);
     setData(data);
     setLoading(false);
   }, [pkas]);
@@ -132,7 +72,39 @@ const ChartJsDemo = () => {
               </button>
             </div>
           </form>
-          {!loading && <Line options={options} data={data} />}
+          {!loading && (
+            <Plot
+              data={[
+                {
+                  x: data.pHvals,
+                  y: data.Xh2a,
+                  type: "scatter",
+                  mode: "lines",
+                  marker: { color: "red" },
+                },
+                {
+                  x: data.pHvals,
+                  y: data.Xha,
+                  type: "scatter",
+                  mode: "lines",
+                  marker: { color: "green" },
+                },
+                {
+                  x: data.pHvals,
+                  y: data.Xa,
+                  label: "Pepito",
+                  type: "scatter",
+                  mode: "lines",
+                  marker: { color: "blue" },
+                },
+              ]}
+              layout={{
+                width: "100%",
+                height: "50vh",
+                title: "Diagrama de especiación",
+              }}
+            />
+          )}
         </CenteredColRow>
       </main>
     </div>
@@ -149,23 +121,20 @@ export const diproticSpeciation = (pkas) => {
   const k1 = 10 ** (-1 * pkas[0]);
   const k2 = 10 ** (-1 * pkas[1]);
 
-  console.log(
-    "Estos son los pkas recibidos y las constantes",
-    pkas,
-    k1,
-    k2
-  );
+  console.log("Estos son los pkas recibidos y las constantes", pkas, k1, k2);
 
   // Generar pH vals
   let pH = 0;
-  const step = 1;
+  const step = 0.1;
   while (pH <= 14) {
     pHvals.push(pH);
     pH = pH + step;
   }
-  for (pH in pHvals) {
+  console.log("pHvals", pHvals);
+  for (let index in pHvals) {
+    console.log(pHvals[parseInt(index)]);
     // obtengo conc de protones
-    const H = 10 ** (-1 * pH);
+    const H = 10 ** (-1 * pHvals[parseInt(index)]);
     // Calculo fraccion molar de a
     const xa = (k1 * k2) / (H ** 2 + k1 * H + k1 * k2);
     // Calculo fraccion molar de Ha
@@ -175,9 +144,8 @@ export const diproticSpeciation = (pkas) => {
     Xa.push(xa);
     Xha.push(xha);
     Xh2a.push(xh2a);
-    console.log(xa + xha + xh2a);
+    console.log({ pH: pHvals[parseInt(index)], H, xa, xha, xh2a });
   }
-  console.log({ pHvals, Xh2a, Xha, Xa });
   return { pHvals, Xh2a, Xha, Xa };
 };
 
