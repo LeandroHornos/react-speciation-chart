@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 
+// REACT-HOOK-FORM
 import { useForm } from "react-hook-form";
 
+// CHART.JS
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,12 +14,16 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+
+// REACT-CHARTJS-2
 import { Line } from "react-chartjs-2";
 
 import { CenteredColRow } from "./Layout";
 
-const ChartJsDemo = () => {
-  const { register, handleSubmit } = useForm();
+const ChartJsSpecPlot = () => {
+  const { register, handleSubmit } = useForm({
+    defaultValues: { pka1: 4, pka2: 8 },
+  });
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
@@ -26,8 +32,10 @@ const ChartJsDemo = () => {
 
   useEffect(() => {
     setLoading(true);
+    // Calculo los valores a graficar a partir de los pKas dados
     const { pHvals, Xh2a, Xha, Xa } = diproticSpeciation(pkas);
 
+    // Creo el gráfico en ChartJS
     ChartJS.register(
       CategoryScale,
       LinearScale,
@@ -38,22 +46,48 @@ const ChartJsDemo = () => {
       Legend
     );
 
+    // Valores de X
     const labels = pHvals;
 
+    //Chart Options
     const options = {
       responsive: true,
+      scales: {
+        x: {
+          ticks: {
+            callback: function (value, index, values) {
+              return value / 10;
+            },
+          },
+        },
+        y: {
+          ticks: {
+            callback: function (value, index, values) {
+              return value;
+            },
+          },
+        },
+      },
+      elements: {
+        point: {
+          radius: 0,
+        },
+      },
       plugins: {
         legend: {
           position: "top",
         },
         title: {
           display: true,
-          text: "Chart.js Line Chart",
+          text: "Diagrama de Especiación",
+          font: {
+            size: 20,
+          },
         },
       },
     };
 
-    const data = {
+    const newdata = {
       labels,
       datasets: [
         {
@@ -77,7 +111,7 @@ const ChartJsDemo = () => {
       ],
     };
     setOptions(options);
-    setData(data);
+    setData(newdata);
     setLoading(false);
   }, [pkas]);
 
@@ -89,8 +123,9 @@ const ChartJsDemo = () => {
     <div className="container">
       <header>
         <CenteredColRow
+          rowClasses=" width100"
           breakpoint="md"
-          centerColSize={8}
+          centerColSize={10}
           centerColClasses="d-flex flex-column justify-content-between align-items-center"
         >
           <h1>Lean's Speciation Diagram</h1>
@@ -98,40 +133,51 @@ const ChartJsDemo = () => {
       </header>
       <main>
         <CenteredColRow
+          rowClasses="width100"
           breakpoint="md"
-          centerColSize={8}
+          centerColSize={10}
           centerColClasses="d-flex flex-column justify-content-between align-items-center"
         >
-          <h2>Ejemplo</h2>
+          <h3>Demo</h3>
           <p>
             Diagrama de especiación de un ácido diprótico. En el gráfico se
             muestra la fracción molar de cada especie para cada pH.
+            <br />
+            Usa los siguientes campos para experimentar como varía el gráfico
+            con distintos valores de pKa. <br />
+            Puedes guardar el gráfico como archivo de imagen haciendo click
+            derecho y seleccionando del menú "guardar imagen como"
           </p>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="form-group">
-              <label htmlFor="pka1">pKa1</label>
-              <input
-                className="form-control"
-                type="number"
-                step="0.01"
-                {...register("pka1")}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="pka2">pKa2</label>
-              <input
-                className="form-control"
-                type="number"
-                step="0.01"
-                {...register("pka2")}
-              />
-            </div>
-            <div className="form-group">
-              <button type="submit" className="btn btn-primary">
-                Recalculando
-              </button>
-            </div>
-          </form>
+          <div className="d-flex justify-content-start align-items-left width100">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              style={{ marginBottom: "60px" }}
+            >
+              <div className="form-group">
+                <label htmlFor="pka1">pKa1</label>
+                <input
+                  className="form-control"
+                  type="number"
+                  step="0.01"
+                  {...register("pka1")}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="pka2">pKa2</label>
+                <input
+                  className="form-control"
+                  type="number"
+                  step="0.01"
+                  {...register("pka2")}
+                />
+              </div>
+              <div className="form-group">
+                <button type="submit" className="btn btn-primary">
+                  Recalcular
+                </button>
+              </div>
+            </form>
+          </div>
           {!loading && <Line options={options} data={data} />}
         </CenteredColRow>
       </main>
@@ -146,8 +192,8 @@ export const diproticSpeciation = (pkas) => {
   const Xa = []; // fraccion molar del anion dibasico sin disociar para cada pH
 
   // Obtengo constantes a partir de pKas
-  const k1 = 10 ** (-1 * 2 * pkas[0]);
-  const k2 = 10 ** (-1 * 2 * pkas[1]);
+  const k1 = 10 ** (-1 * pkas[0]);
+  const k2 = 10 ** (-1 * pkas[1]);
 
   console.log(
     "Estos son los pkas recibidos y las constantes correspondientes",
@@ -158,12 +204,12 @@ export const diproticSpeciation = (pkas) => {
 
   // Generar pH vals
   let pH = 0;
-  const step = 1;
+  const step = 0.1;
   while (pH <= 14) {
     pHvals.push(pH);
     pH = pH + step;
   }
-  for (val in pHvals) {
+  pHvals.forEach((val) => {
     // obtengo conc de protones
     const H = 10 ** (-1 * val);
     // Calculo fraccion molar de a
@@ -176,11 +222,11 @@ export const diproticSpeciation = (pkas) => {
     Xha.push(xha);
     Xh2a.push(xh2a);
     console.log(xa + xha + xh2a);
-  }
+  });
   console.log({ pHvals, Xh2a, Xha, Xa });
   return { pHvals, Xh2a, Xha, Xa };
 };
 
-export default ChartJsDemo;
+export default ChartJsSpecPlot;
 
 // a ver si actualiza con un push

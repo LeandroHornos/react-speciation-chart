@@ -1,11 +1,11 @@
-import ChartJsDemoPlotly from "./Components/ChartJsDemoPlotly";
+import ChartJsSpecPlot from "./Components/ChartJsSpecPlot";
 // BOOTSTRAP
 import "bootstrap/dist/css/bootstrap.css";
 
 function App() {
   return (
-    <div className="App">
-      <ChartJsDemoPlotly />
+    <div>
+      <ChartJsSpecPlot />
     </div>
   );
 }

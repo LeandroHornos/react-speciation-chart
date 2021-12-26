@@ -6,7 +6,7 @@ import Plot from "react-plotly.js";
 
 import { CenteredColRow } from "./Layout";
 
-const ChartJsDemo = () => {
+const PlotlySpecPlot = () => {
   const { register, handleSubmit } = useForm();
 
   const [loading, setLoading] = useState(true);
@@ -130,11 +130,9 @@ export const diproticSpeciation = (pkas) => {
     pHvals.push(pH);
     pH = pH + step;
   }
-  console.log("pHvals", pHvals);
-  for (let index in pHvals) {
-    console.log(pHvals[parseInt(index)]);
+  pHvals.forEach((val) => {
     // obtengo conc de protones
-    const H = 10 ** (-1 * pHvals[parseInt(index)]);
+    const H = 10 ** (-1 * val);
     // Calculo fraccion molar de a
     const xa = (k1 * k2) / (H ** 2 + k1 * H + k1 * k2);
     // Calculo fraccion molar de Ha
@@ -144,11 +142,11 @@ export const diproticSpeciation = (pkas) => {
     Xa.push(xa);
     Xha.push(xha);
     Xh2a.push(xh2a);
-    console.log({ pH: pHvals[parseInt(index)], H, xa, xha, xh2a });
-  }
+    console.log({ pH: val, H, xa, xha, xh2a });
+  });
   return { pHvals, Xh2a, Xha, Xa };
 };
 
-export default ChartJsDemo;
+export default PlotlySpecPlot;
 
 // a ver si actualiza con un push
