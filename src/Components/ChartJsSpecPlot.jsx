@@ -52,6 +52,7 @@ const ChartJsSpecPlot = () => {
     //Chart Options
     const options = {
       responsive: true,
+      maintainAspectRatio: false,
       scales: {
         x: {
           ticks: {
@@ -178,7 +179,13 @@ const ChartJsSpecPlot = () => {
               </div>
             </form>
           </div>
-          {!loading && <Line options={options} data={data} />}
+          {!loading && (
+            <div
+              style={{ width: "100%", maxHeight: "100vh", minHeight: "50vh" }}
+            >
+              <Line options={options} data={data} />
+            </div>
+          )}
         </CenteredColRow>
       </main>
     </div>
