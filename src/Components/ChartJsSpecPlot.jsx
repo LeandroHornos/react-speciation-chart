@@ -129,7 +129,7 @@ const ChartJsSpecPlot = () => {
           centerColSize={10}
           centerColClasses="d-flex flex-column justify-content-between align-items-center"
         >
-          <h1>Lean's Speciation Diagram</h1>
+          <h1 className="text-center">Lean's Speciation Diagram</h1>
         </CenteredColRow>
       </header>
       <main>
@@ -139,7 +139,7 @@ const ChartJsSpecPlot = () => {
           centerColSize={10}
           centerColClasses="d-flex flex-column justify-content-between align-items-center"
         >
-          <h3>Demo</h3>
+          <h3 className="text-center">Demo</h3>
           <p>
             Diagrama de especiación de un ácido diprótico. En el gráfico se
             muestra la fracción molar de cada especie para cada pH.
