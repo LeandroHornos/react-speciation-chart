@@ -4,6 +4,13 @@ This is an example of a react component that takes an array of pkas from a polyp
 
 It uses Chart.Js for the graphs
 
+## Archivos
+./src/components/ChartJsSpecPlot.jsx: contiene la GUI
+./speciation.js: tiene la lógica para calcular las fracciones molares a partir de los pKas
+./components/Layout: components basados en bootstrap para organizar los elementos en la página
+
+
+
 ## React
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
