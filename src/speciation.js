@@ -62,8 +62,8 @@ export const polyproticSpeciation = (pkas) => {
   // que va desde 0 hasta N
   for (let i = 0; i <= N; i++) {
     const key = () => {
-      if (i == 0) return "A";
-      else if (i == 1) return "HA";
+      if (i === 0) return "A";
+      else if (i === 1) return "HA";
       else return `H${i}A`;
     };
     data[i.toString()] = { name: key(), points: [], Hs: i };

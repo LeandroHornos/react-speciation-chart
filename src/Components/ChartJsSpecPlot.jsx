@@ -26,7 +26,7 @@ const ChartJsSpecPlot = () => {
   const { register, handleSubmit } = useForm({
     defaultValues: { pka1: 4, pka2: 8 },
   });
-
+  const [protons, setProtons] = useState(new Array(2).fill(1));
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
   const [pkas, setPkas] = useState([4, 8]);
@@ -94,6 +94,12 @@ const ChartJsSpecPlot = () => {
     setLoading(false);
   }, [pkas]);
 
+  const handleProtonsChange = (n) => {
+    const array = new Array(parseInt(n)).fill(1);
+    setProtons(array);
+    return;
+  };
+
   const onSubmit = (data) => {
     setPkas([parseFloat(data.pka1), parseFloat(data.pka2)]);
   };
@@ -126,29 +132,47 @@ const ChartJsSpecPlot = () => {
             Puedes guardar el gráfico como archivo de imagen haciendo click
             derecho y seleccionando del menú "guardar imagen como"
           </p>
+          <div className="formGroup">
+            <label htmlFor="protons">Número</label>
+            <select
+              className="form-contronl"
+              name="protons"
+              id="protons"
+              defaultValue={2}
+              onChange={(e) => {
+                handleProtonsChange(e.target.value);
+              }}
+            >
+              {new Array(10).fill(1).map((number, i) => {
+                i = parseInt(i) + 1;
+                return (
+                  <option value={i} key={"opt" + i.toString()}>
+                    {i}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
           <div className="d-flex justify-content-start align-items-left width100">
             <form
               onSubmit={handleSubmit(onSubmit)}
               style={{ marginBottom: "60px" }}
             >
-              <div className="form-group">
-                <label htmlFor="pka1">pKa1</label>
-                <input
-                  className="form-control"
-                  type="number"
-                  step="0.01"
-                  {...register("pka1")}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="pka2">pKa2</label>
-                <input
-                  className="form-control"
-                  type="number"
-                  step="0.01"
-                  {...register("pka2")}
-                />
-              </div>
+              <h1>Pkas</h1>
+              {protons.map((v, i) => {
+                return (
+                  <div className="form-group" key={`pka${i + 1}`}>
+                    <label htmlFor={`pka${i + 1}`}>{`pka${i + 1}`}</label>
+                    <input
+                      className="form-control"
+                      type="number"
+                      step="0.01"
+                      {...register(`pka${i + 1}`, { required: true })}
+                    />
+                  </div>
+                );
+              })}
+
               <div className="form-group">
                 <button type="submit" className="btn btn-primary">
                   Recalcular
