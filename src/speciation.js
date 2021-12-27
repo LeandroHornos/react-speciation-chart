@@ -112,13 +112,12 @@ export const polyproticChartJsData = (pHvals, molarfractions) => {
 
   const datasets = Object.keys(molarfractions).map((key, index) => {
     // Indice para el color. Tomo secuencialmente los 10 primeros
-    // colores, si se necesitan más vuelvo a tomar al azar
-    let i = index < 10 ? index : Math.floor(Math.random() * 10);
+    // colores, si se necesitan más uso un color al azar
     return {
       label: molarfractions[key].name,
       data: molarfractions[key].points,
-      backgroundColor: colorList[i],
-      borderColor: colorList[i],
+      backgroundColor: index < 10 ? colorList[index] : randomRgb(),
+      borderColor: index < 10 ? colorList[index] : randomRgb(),
     };
   });
   const newdata = {
