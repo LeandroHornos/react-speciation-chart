@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 // REACT-HOOK-FORM
 import { useForm } from "react-hook-form";
@@ -23,13 +23,12 @@ import { Line } from "react-chartjs-2";
 import { CenteredColRow } from "./Layout";
 
 const ChartJsSpecPlot = () => {
-  const { register, handleSubmit } = useForm({
-    defaultValues: { pka1: 4, pka2: 8 },
-  });
-  const [protons, setProtons] = useState(new Array(2).fill(1));
+  const chartRef = useRef(null);
+  const { register, handleSubmit, reset } = useForm({});
+  const [protons, setProtons] = useState(new Array(1).fill(1));
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
-  const [pkas, setPkas] = useState([4, 8]);
+  const [pkas, setPkas] = useState([4]);
 
   //Chart Options
   const options = {
@@ -96,12 +95,19 @@ const ChartJsSpecPlot = () => {
 
   const handleProtonsChange = (n) => {
     const array = new Array(parseInt(n)).fill(1);
+    reset();
     setProtons(array);
     return;
   };
 
   const onSubmit = (data) => {
-    setPkas([parseFloat(data.pka1), parseFloat(data.pka2)]);
+    const keys = Object.keys(data);
+    const newPkas = [];
+    keys.forEach((key) => {
+      newPkas.push(data[key]);
+    });
+    setPkas(newPkas);
+    chartRef.current.scrollIntoView();
   };
   return (
     <div className="container">
@@ -132,33 +138,40 @@ const ChartJsSpecPlot = () => {
             Puedes guardar el gráfico como archivo de imagen haciendo click
             derecho y seleccionando del menú "guardar imagen como"
           </p>
-          <div className="formGroup">
-            <label htmlFor="protons">Número</label>
-            <select
-              className="form-contronl"
-              name="protons"
-              id="protons"
-              defaultValue={2}
-              onChange={(e) => {
-                handleProtonsChange(e.target.value);
-              }}
-            >
-              {new Array(10).fill(1).map((number, i) => {
-                i = parseInt(i) + 1;
-                return (
-                  <option value={i} key={"opt" + i.toString()}>
-                    {i}
-                  </option>
-                );
-              })}
-            </select>
+          <div
+            className="width100 d-flex align-items-left justify-content-start"
+            style={{ margin: "10px 0px" }}
+          >
+            <div className="formGroup">
+              <label htmlFor="protons">
+                <strong>Número de protones</strong>
+              </label>
+              <select
+                className="form-control"
+                name="protons"
+                id="protons"
+                defaultValue={1}
+                onChange={(e) => {
+                  handleProtonsChange(e.target.value);
+                }}
+              >
+                {new Array(10).fill(1).map((number, i) => {
+                  i = parseInt(i) + 1;
+                  return (
+                    <option value={i} key={"opt" + i.toString()}>
+                      {i}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
           </div>
           <div className="d-flex justify-content-start align-items-left width100">
             <form
               onSubmit={handleSubmit(onSubmit)}
               style={{ marginBottom: "60px" }}
             >
-              <h1>Pkas</h1>
+              <h3 className="text-left">Pkas</h3>
               {protons.map((v, i) => {
                 return (
                   <div className="form-group" key={`pka${i + 1}`}>
@@ -182,6 +195,7 @@ const ChartJsSpecPlot = () => {
           </div>
           {!loading && (
             <div
+              ref={chartRef}
               style={{ width: "100%", maxHeight: "100vh", minHeight: "50vh" }}
             >
               <Line options={options} data={data} />
