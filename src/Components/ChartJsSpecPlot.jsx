@@ -108,7 +108,7 @@ const ChartJsSpecPlot = () => {
       newPkas.push(data[key]);
     });
     setPkas(newPkas);
-    chartRef.current.scrollIntoView();
+    chartContRef.current.scrollIntoView();
   };
 
   const onClick = (event) => {
