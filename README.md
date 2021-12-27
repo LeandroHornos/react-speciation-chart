@@ -1,4 +1,5 @@
 # Speciation Chart
+
 ![screenshot](https://imgur.com/vQvmZ3o.png)
 
 This is an example of a react component that takes an array of pkas from a polyprotic acid and returns a speciation chart. This kind of chart shows the molar fraction of each species at different pH levels.
@@ -12,7 +13,7 @@ It uses Chart.Js for the graphs
 ## Files
 
 <ul>
-    <li>./src/components/ChartJsSpecPlot.jsx: GUI</li>
+    <li>./src/components/SpecDiagram.jsx: Chart and functionalities. Gets pkas through props</li>
     <li>./speciation.js: logic for the calculation of molar fractions given some pkas</li>
     <li>./components/Layout: bootstrap based components to make a responsive distribution of elements</li>
 </ul>
