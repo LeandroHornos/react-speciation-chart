@@ -34,6 +34,7 @@ const ChartJsSpecPlot = () => {
     setLoading(true);
     // Calculo los valores a graficar a partir de los pKas dados
     const { pHvals, Xh2a, Xha, Xa } = diproticSpeciation(pkas);
+    polyproticSpeciation([2, 4, 6, 8, 10]);
 
     // Creo el gráfico en ChartJS
     ChartJS.register(
@@ -117,7 +118,6 @@ const ChartJsSpecPlot = () => {
   }, [pkas]);
 
   const onSubmit = (data) => {
-    console.log(data);
     setPkas([parseFloat(data.pka1), parseFloat(data.pka2)]);
   };
   return (
@@ -202,13 +202,6 @@ export const diproticSpeciation = (pkas) => {
   const k1 = 10 ** (-1 * pkas[0]);
   const k2 = 10 ** (-1 * pkas[1]);
 
-  console.log(
-    "Estos son los pkas recibidos y las constantes correspondientes",
-    pkas,
-    k1,
-    k2
-  );
-
   // Generar pH vals
   let pH = 0;
   const step = 0.1;
@@ -228,10 +221,25 @@ export const diproticSpeciation = (pkas) => {
     Xa.push(xa);
     Xha.push(xha);
     Xh2a.push(xh2a);
-    console.log(xa + xha + xh2a);
   });
-  console.log({ pHvals, Xh2a, Xha, Xa });
   return { pHvals, Xh2a, Xha, Xa };
+};
+
+export const polyproticSpeciation = (pkas) => {
+  console.log("Poly dice Hola!");
+  const pHvals = []; // container para rango de valores de pH (x del grafico)
+  const N = pkas.length;
+  let data = {};
+  // Crear un objeto cuyas claves sean HnA y tenga [] como valor
+  for (let i = 0; i <= N; i++) {
+    const key = () => {
+      if (i == 0) return "A";
+      else if (i == 1) return "HA";
+      else return `H${i}A`;
+    };
+    data[key()] = [];
+  }
+  console.log("Poly data", data);
 };
 
 export default ChartJsSpecPlot;
