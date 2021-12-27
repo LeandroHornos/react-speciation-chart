@@ -133,7 +133,7 @@ const ChartJsSpecPlot = () => {
             Diagrama de especiación de un ácido poliprótico. En el gráfico se
             muestra la fracción molar de cada especie para cada pH.
             <br />
-            Selecciona el número de protones y usa los siguientes campos
+            Selecciona el número de protones y usa los campos
             generados para experimentar como varía el gráfico con distintos
             valores de pKa. <br />
             Puedes guardar el gráfico como archivo de imagen haciendo click
@@ -188,7 +188,11 @@ const ChartJsSpecPlot = () => {
               })}
 
               <div className="form-group">
-                <button type="submit" className="btn btn-primary">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ marginTop: "20px" }}
+                >
                   Recalcular
                 </button>
               </div>
@@ -204,6 +208,19 @@ const ChartJsSpecPlot = () => {
           )}
         </CenteredColRow>
       </main>
+      <footer style={{ marginTop: "60px", marginBottom: "10px" }}>
+        <CenteredColRow
+          centerColSize={12}
+          centerColClasses="d-flex align-items-center justify-content-center"
+        >
+          <a
+            href="https://github.com/LeandroHornos"
+            style={{ fontSize: "0.6em" }}
+          >
+            https://github.com/LeandroHornos
+          </a>
+        </CenteredColRow>
+      </footer>
     </div>
   );
 };
