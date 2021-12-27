@@ -1,5 +1,3 @@
-
-
 /* 
 
 CALCULOS PARA EL DIAGRAMA DE ESPECIACION
@@ -9,42 +7,40 @@ Estas funciones, dado un conjunto de pkas, calculan las fracciones
 molares de cada especie para cada punto en la escala de pH. 
 
 Se da como ejemplo particular la especiacion de un ácido diprótico
-y luego se extiende a la fórmula general de un ácido poliprótico
+y luego se extiende a la fórmula general de un ácido poliprótico.
 
+Para un ácido poliprótico definido genericamente como HNA, donde N es el
+número de protones capaces de ser intercambiados, si se conocen
+sus constantes de disociación puede calcularse la fracción molar
+de cada una de las especies con distinto grado de disociación para cada pH.
 
+Llamemos P al polinomio definido como
 
-*/ export const diproticSpeciation = (pkas) => {
-  const pHvals = []; // container para rango de valores de pH (x del grafico)
-  const Xh2a = []; // fraccion molar del acido diprotico sin disociar para cada pH
-  const Xha = []; // fraccion molar del anion monobasico sin disociar para cada pH
-  const Xa = []; // fraccion molar del anion dibasico sin disociar para cada pH
+P = [H+]^N + K1*[H+]^(N-1) + K1*K2*[H+]^(N-2) + ... + K1*K2*...*KN*[H+]^(N-N = 0)
 
-  // Obtengo constantes a partir de pKas
-  const k1 = 10 ** (-1 * pkas[0]);
-  const k2 = 10 ** (-1 * pkas[1]);
+y Llamamos Tk a cada término del polinomio, de forma tal que
 
-  // Generar pH vals
-  let pH = 0;
-  const step = 0.1;
-  while (pH <= 14) {
-    pHvals.push(pH);
-    pH = pH + step;
-  }
-  pHvals.forEach((val) => {
-    // obtengo conc de protones
-    const H = 10 ** (-1 * val);
-    // Calculo fraccion molar de a
-    const xa = (k1 * k2) / (H ** 2 + k1 * H + k1 * k2);
-    // Calculo fraccion molar de Ha
-    const xha = (k1 * H) / (H ** 2 + k1 * H + k1 * k2);
-    // Calculo fraccion molar de H2a
-    const xh2a = H ** 2 / (H ** 2 + k1 * H + k1 * k2);
-    Xa.push(xa);
-    Xha.push(xha);
-    Xh2a.push(xh2a);
-  });
-  return { pHvals, Xh2a, Xha, Xa };
-};
+P = T0 + T1 + T2 + ... + TN
+
+Vemos que el polinomio tiene N+1 términos, es decir, hay un término en el
+polinomio por cada especie en el equilibrio. 
+
+Si se trabaja con los balances de masa y las ecuaciones de equilibrio puede
+llegarse a la siguiente expresión:
+
+--------------------------------------
+|                                     |
+|   XHkA = TN-k / P ; k=0,1,2,...,N   |
+|                                     |
+---------------------------------------
+
+Es decir, la fracción molar de la especie que tiene k protones a un dado pH
+es igual un término del poliniomio dividido el polinomio completo.
+
+En esta ecuación se basa el cálculo de las fracciones molares que se hace a 
+continuación
+
+*/
 
 export const polyproticSpeciation = (pkas) => {
   console.log("Poly dice Hola!");
@@ -59,9 +55,11 @@ export const polyproticSpeciation = (pkas) => {
     pH = pH + step;
   }
 
-  // Estructura para almacenar los valores de y de cada serie
-  let data = {};
   // Crear un objeto para almacenar las fracciones molares calculadas
+  let data = {};
+
+  // Como keys uso el número de hidrógenos de la especie en cuestión
+  // que va desde 0 hasta N
   for (let i = 0; i <= N; i++) {
     const key = () => {
       if (i == 0) return "A";
@@ -71,12 +69,14 @@ export const polyproticSpeciation = (pkas) => {
     data[i.toString()] = { name: key(), points: [], Hs: i };
   }
 
-  // Obtengo las constantes
+  // Obtengo los pkas de menor mayor
+  pkas = pkas.sort(function (a, b) {
+    return a - b;
+  });
+  // Calculo las constantes a partir de los pKas
   const ks = pkas.map((pka) => {
     return 10 ** (-1 * pka);
   });
-  console.log("ks", ks);
-
   // Obtengo los coeficionentes del polinomio
   const coefs = [1];
   let coef = 1;
@@ -110,13 +110,15 @@ export const polyproticChartJsData = (pHvals, molarfractions) => {
   // para cada key en data hay que obtener la serie
   // en el grafico
 
-  const datasets = Object.keys(molarfractions).map((key) => {
-    let color = randomRgb();
+  const datasets = Object.keys(molarfractions).map((key, index) => {
+    // Indice para el color. Tomo secuencialmente los 10 primeros
+    // colores, si se necesitan más vuelvo a tomar al azar
+    let i = index < 10 ? index : Math.floor(Math.random() * 10);
     return {
       label: molarfractions[key].name,
       data: molarfractions[key].points,
-      backgroundColor: color,
-      borderColor: color,
+      backgroundColor: colorList[i],
+      borderColor: colorList[i],
     };
   });
   const newdata = {
@@ -135,3 +137,17 @@ export const randomRgb = () => {
   }
   return `rgb(${vals[0]},${vals[1]},${vals[2]})`;
 };
+
+const colorList = [
+  "rgb(255,50,50)",
+  "rgb(50,255,50)",
+  "rgb(50,50,255)",
+  "rgb(252,186,3)",
+  "rgb(219,3,252)",
+  "rgb(66,174,189)",
+  "rgb(227,107,16)",
+  "rgb(102,189,106)",
+  "rgb(88,12,138)",
+  "rgb(112,103,117)",
+  "rgb(122,143,86)",
+];
