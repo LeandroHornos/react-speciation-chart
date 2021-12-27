@@ -6,11 +6,15 @@ It uses Chart.Js for the graphs
 
 ## Try it Out!
 
-## Files
-./src/components/ChartJsSpecPlot.jsx: GUI
-./speciation.js: logic for the calculation of molar fractions given some pkas
-./components/Layout: bootstrap based components to make a responsive distribution of elements
+<a href="https://leans-speciation-diagram.netlify.app/">https://leans-speciation-diagram.netlify.app/</a>
 
+## Files
+
+<ul>
+    <li>./src/components/ChartJsSpecPlot.jsx: GUI</li>
+    <li>./speciation.js: logic for the calculation of molar fractions given some pkas</li>
+    <li>./components/Layout: bootstrap based components to make a responsive distribution of elements</li>
+</ul>
 
 ## React
 
