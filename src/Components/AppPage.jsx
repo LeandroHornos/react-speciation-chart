@@ -1,99 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 
 // REACT-HOOK-FORM
 import { useForm } from "react-hook-form";
 
-// CHART.JS
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  PointElement,
-  LinearScale,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-import { polyproticSpeciation, polyproticChartJsData } from "../speciation";
-
-// REACT-CHARTJS-2
-import { Line } from "react-chartjs-2";
-
 import { CenteredColRow } from "./Layout";
 
-const ChartJsSpecPlot = () => {
+import SpecDiagram from "./SpecDiagram";
+
+const AppPage = () => {
   const chartContRef = useRef(null);
-  const chartRef = useRef();
   const { register, handleSubmit, reset } = useForm({});
   const [protons, setProtons] = useState(new Array(1).fill(1));
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({});
-  const [pkas, setPkas] = useState([4]);
-
-  //Chart Options
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        ticks: {
-          callback: function (value, index, values) {
-            return value / 10;
-          },
-        },
-      },
-      y: {
-        ticks: {
-          callback: function (value, index, values) {
-            return value;
-          },
-        },
-      },
-    },
-    elements: {
-      point: {
-        radius: 0,
-      },
-    },
-    plugins: {
-      colorschemes: {
-        scheme: "brewer.Paired12",
-      },
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Diagrama de Especiación",
-        font: {
-          size: 20,
-        },
-      },
-    },
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    // Calculo los valores a graficar a partir de los pKas dados
-    // const { pHvals, Xh2a, Xha, Xa } = diproticSpeciation(pkas);
-    const { pHvals, molarfractions } = polyproticSpeciation(pkas);
-    const newdata = polyproticChartJsData(pHvals, molarfractions);
-
-    // Creo el gráfico en ChartJS
-    ChartJS.register(
-      CategoryScale,
-      LinearScale,
-      PointElement,
-      LineElement,
-      Title,
-      Tooltip,
-      Legend
-    );
-    setData(newdata);
-    setLoading(false);
-  }, [pkas]);
-
+  const [pkas, setPkas] = useState([6]);
   const handleProtonsChange = (n) => {
     const array = new Array(parseInt(n)).fill(1);
     reset();
@@ -111,19 +29,6 @@ const ChartJsSpecPlot = () => {
     chartContRef.current.scrollIntoView();
   };
 
-  const onClick = (event) => {
-    /* Esta funcion toma una captura
-    del estado actual del gráfico y dispara
-    la descarga del archivo png */
-    downloadChartImg(chartRef.current.toBase64Image());
-  };
-
-  const downloadChartImg = (url) => {
-    const link = document.createElement("a");
-    link.download = "filename.png";
-    link.href = url;
-    link.click();
-  };
   return (
     <div className="container">
       <header>
@@ -213,31 +118,7 @@ const ChartJsSpecPlot = () => {
               </div>
             </form>
           </div>
-          {!loading && (
-            <React.Fragment>
-              {" "}
-              <div
-                ref={chartContRef}
-                style={{ width: "100%", maxHeight: "100vh", minHeight: "50vh" }}
-              >
-                <Line
-                  options={options}
-                  data={data}
-                  ref={chartRef}
-                  onClick={onClick}
-                />
-              </div>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onClick(e);
-                }}
-              >
-                Descargar la imagen
-              </a>
-            </React.Fragment>
-          )}
+          <SpecDiagram pkas={pkas} chartContRef={chartContRef} />
         </CenteredColRow>
       </main>
       <footer style={{ marginTop: "60px", marginBottom: "10px" }}>
@@ -257,6 +138,6 @@ const ChartJsSpecPlot = () => {
   );
 };
 
-export default ChartJsSpecPlot;
+export default AppPage;
 
 // a ver si actualiza con un push
