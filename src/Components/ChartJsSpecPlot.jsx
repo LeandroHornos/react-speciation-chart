@@ -55,6 +55,9 @@ const ChartJsSpecPlot = () => {
       },
     },
     plugins: {
+      colorschemes: {
+        scheme: "brewer.Paired12",
+      },
       legend: {
         position: "top",
       },
@@ -262,9 +265,12 @@ export const polyproticChartData = (pHvals, molarfractions) => {
   // en el grafico
 
   const datasets = Object.keys(molarfractions).map((key) => {
+    let color = randomRgb()
     return {
       label: molarfractions[key].name,
       data: molarfractions[key].points,
+      backgroundColor: color ,
+      borderColor: color,
     };
   });
   const newdata = {
@@ -272,6 +278,16 @@ export const polyproticChartData = (pHvals, molarfractions) => {
     datasets,
   };
   return newdata;
+};
+
+const randomRgb = () => {
+  let i = 0;
+  let vals = [];
+  while (i < 3) {
+    vals.push(Math.floor(Math.random() * 255));
+    i++;
+  }
+  return `rgb(${vals[0]},${vals[1]},${vals[2]})`;
 };
 
 export default ChartJsSpecPlot;
