@@ -1,5 +1,5 @@
 # Speciation Chart
-![alt text](https://imgur.com/vQvmZ3o)
+![alt text](https://imgur.com/a/jXZdvgu)
 
 This is an example of a react component that takes an array of pkas from a polyprotic acid and returns a speciation chart. This kind of chart shows the molar fraction of each species at different pH levels.
 
