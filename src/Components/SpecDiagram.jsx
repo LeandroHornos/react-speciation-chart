@@ -130,7 +130,7 @@ const SpecDiagram = (props) => {
           >
             Descargar la imagen
           </button>
-          <CsvDownloader filename={"my-file.csv"} data={data} separator={";"} />
+          <CsvDownloader filename={"my-speciation-diagram.csv"} data={data} separator={";"} />
         </div>
       </React.Fragment>
     )
