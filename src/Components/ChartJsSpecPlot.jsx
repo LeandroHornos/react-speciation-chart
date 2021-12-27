@@ -23,7 +23,8 @@ import { Line } from "react-chartjs-2";
 import { CenteredColRow } from "./Layout";
 
 const ChartJsSpecPlot = () => {
-  const chartRef = useRef(null);
+  const chartContRef = useRef(null);
+  const chartRef = useRef();
   const { register, handleSubmit, reset } = useForm({});
   const [protons, setProtons] = useState(new Array(1).fill(1));
   const [loading, setLoading] = useState(true);
@@ -109,6 +110,20 @@ const ChartJsSpecPlot = () => {
     setPkas(newPkas);
     chartRef.current.scrollIntoView();
   };
+
+  const onClick = (event) => {
+    /* Esta funcion toma una captura
+    del estado actual del gráfico y dispara
+    la descarga del archivo png */
+    downloadChartImg(chartRef.current.toBase64Image());
+  };
+
+  const downloadChartImg = (url) => {
+    const link = document.createElement("a");
+    link.download = "filename.png";
+    link.href = url;
+    link.click();
+  };
   return (
     <div className="container">
       <header>
@@ -133,9 +148,9 @@ const ChartJsSpecPlot = () => {
             Diagrama de especiación de un ácido poliprótico. En el gráfico se
             muestra la fracción molar de cada especie para cada pH.
             <br />
-            Selecciona el número de protones y usa los campos
-            generados para experimentar como varía el gráfico con distintos
-            valores de pKa. <br />
+            Selecciona el número de protones y usa los campos generados para
+            experimentar como varía el gráfico con distintos valores de pKa.{" "}
+            <br />
             Puedes guardar el gráfico como archivo de imagen haciendo click
             derecho y seleccionando del menú "guardar imagen como"
           </p>
@@ -199,12 +214,29 @@ const ChartJsSpecPlot = () => {
             </form>
           </div>
           {!loading && (
-            <div
-              ref={chartRef}
-              style={{ width: "100%", maxHeight: "100vh", minHeight: "50vh" }}
-            >
-              <Line options={options} data={data} />
-            </div>
+            <React.Fragment>
+              {" "}
+              <div
+                ref={chartContRef}
+                style={{ width: "100%", maxHeight: "100vh", minHeight: "50vh" }}
+              >
+                <Line
+                  options={options}
+                  data={data}
+                  ref={chartRef}
+                  onClick={onClick}
+                />
+              </div>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onClick(e);
+                }}
+              >
+                Descargar la imagen
+              </a>
+            </React.Fragment>
           )}
         </CenteredColRow>
       </main>
