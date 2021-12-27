@@ -1,4 +1,10 @@
-# Getting Started with Create React App
+# Speciation Chart
+
+This is an example of a react component that takes an array of pkas from a polyprotic acid and returns a speciation chart. This kind of charts show the molar fraction of each species at different pH levels.
+
+It uses Chart.Js for the graphs
+
+## React
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
