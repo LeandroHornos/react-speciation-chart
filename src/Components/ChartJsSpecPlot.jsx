@@ -130,11 +130,12 @@ const ChartJsSpecPlot = () => {
         >
           <h3 className="text-center">Demo</h3>
           <p>
-            Diagrama de especiación de un ácido diprótico. En el gráfico se
+            Diagrama de especiación de un ácido poliprótico. En el gráfico se
             muestra la fracción molar de cada especie para cada pH.
             <br />
-            Usa los siguientes campos para experimentar como varía el gráfico
-            con distintos valores de pKa. <br />
+            Selecciona el número de protones y usa los siguientes campos
+            generados para experimentar como varía el gráfico con distintos
+            valores de pKa. <br />
             Puedes guardar el gráfico como archivo de imagen haciendo click
             derecho y seleccionando del menú "guardar imagen como"
           </p>
