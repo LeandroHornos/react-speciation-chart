@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
+import { CSVLink, CSVDownload } from "react-csv";
+
 // CHART.JS
 import {
   Chart as ChartJS,
@@ -115,20 +117,50 @@ const SpecDiagram = (props) => {
             onClick={onClick}
           />
         </div>
-        <button
-          className="btn btn-link"
-          onClick={(e) => {
-            e.preventDefault();
-            onClick(e);
-          }}
+        <div
+          className="d-flex flex-column justify-content-around align-items-center width100"
+          style={{ marginTop: "40px" }}
         >
-          Descargar la imagen
-        </button>
+          <button
+            className="btn btn-link"
+            onClick={(e) => {
+              e.preventDefault();
+              onClick(e);
+            }}
+          >
+            Descargar la imagen
+          </button>
+          <CsvDownloader filename={"my-file.csv"} data={data} separator={";"} />
+        </div>
       </React.Fragment>
     )
   );
 };
 
-export default SpecDiagram;
+export const CsvDownloader = (props) => {
+  const pHvals = props.data.labels;
+  let dataObject = props.data.datasets;
+  dataObject["pH"] = { data: pHvals };
+  const keys = Object.keys(props.data.datasets);
+  // Creo un array de arrays, donde cada elemento es una fila
+  // La primera fila contiene los nombres de los headers
+  const dataArray = [keys];
 
-// a ver si actualiza con un push
+  for (let i = 0; i < pHvals.length; i++) {
+    const row = [];
+    keys.forEach((key) => {
+      row.push(dataObject[key].data[i]);
+    });
+    dataArray.push(row);
+  }
+
+  console.log("header", dataArray[0], "vals", dataArray[1]);
+
+  return (
+    <React.Fragment>
+      <CSVLink data={dataArray}>Descargar CSV</CSVLink>
+    </React.Fragment>
+  );
+};
+
+export default SpecDiagram;
